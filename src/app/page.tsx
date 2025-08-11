@@ -1,439 +1,489 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
-  Brain,
+  Focus,
   Timer,
-  Volume2,
-  Shield,
+  Target,
   Zap,
+  Shield,
+  Brain,
+  Clock,
+  TrendingUp,
+  Users,
   Star,
-  Play,
-  Pause,
-  SkipForward,
-  Download,
-  Apple,
-  Smartphone,
-  Monitor,
+  ChevronDown,
+  Menu,
+  X,
 } from "lucide-react";
-import Link from "next/link";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ShimmerButton } from "@/components/magicui/shimmer-button";
 
-export default function FocusHelperLanding() {
+interface NavItem {
+  name: string;
+  href: string;
+}
+
+interface FeatureCard {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  stats?: { label: string; value: string }[];
+}
+
+const NavBar = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const navItems: NavItem[] = [
+    { name: "Features", href: "#features" },
+    { name: "Preview", href: "#preview" },
+  ];
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const desktopLayoutClasses = isScrolled
+    ? "md:grid md:grid-cols-3 md:items-center md:gap-x-32"
+    : "md:flex md:items-center md:justify-between";
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-50 via-white to-blue-50">
-      {/* Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-gray-200/50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <Brain className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-semibold text-gray-900">
-              Distraction Blocker
-            </span>
-          </div>
+    <motion.nav
+      className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ${
+        isScrolled
+          ? "bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl px-6 py-3 shadow-2xl"
+          : "bg-transparent px-6 py-4"
+      }`}
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      style={{
+        width: "100%",
+        maxWidth: isScrolled ? "1200px" : "1100px",
+      }}
+    >
+      {/* Mobile header */}
+      <div className="relative flex items-center justify-between py-3 md:hidden">
+        <motion.div
+          className="text-xl font-bold text-white flex items-center gap-2"
+          whileHover={{ scale: 1.05 }}
+        >
+          <div className="w-2 h-2 bg-white rounded-full"></div>
+          Focus Helper
+        </motion.div>
+        <button
+          className="md:hidden text-white"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </div>
 
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link
-              href="#features"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Features
-            </Link>
-            <Link
-              href="#pricing"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Pricing
-            </Link>
-            <Link
-              href="#download"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Download
-            </Link>
-          </nav>
+      {/* Desktop header */}
+      <div className={`relative hidden ${desktopLayoutClasses} py-3 lg:py-4`}>
+        {/* Left: Brand */}
+        <motion.div
+          className="text-xl font-bold text-white flex items-center gap-2"
+          whileHover={{ scale: 1.05 }}
+        >
+          <div className="w-2 h-2 bg-white rounded-full"></div>
+          Focus Helper
+        </motion.div>
 
-          <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-full px-6">
-            Get Started
+        {/* Center: Links */}
+        <div
+          className={`hidden md:flex items-center justify-center ${
+            isScrolled ? "space-x-12" : "space-x-8"
+          } transition-all duration-300`}
+        >
+          {navItems.map((item) => (
+            <motion.a
+              key={item.name}
+              href={item.href}
+              className="text-white/80 hover:text-white transition-colors text-sm font-medium"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {item.name}
+            </motion.a>
+          ))}
+        </div>
+
+        <div className="hidden md:flex items-center justify-end">
+          <Button
+            variant="secondary"
+            size="lg"
+            className="bg-black/40 backdrop-blur-lg border border-white/10 text-white hover:bg-black/60 hover:border-white/20 font-medium transition-all duration-300"
+          >
+            GitHub
           </Button>
         </div>
-      </header>
+      </div>
 
-      {/* Hero Section */}
-      <section className="pt-20 pb-32 px-4">
-        <div className="container mx-auto text-center max-w-4xl">
-          <Badge
-            variant="secondary"
-            className="mb-6 bg-blue-50 text-blue-700 border-blue-200 rounded-full px-4 py-2"
-          >
-            ✨ Now with AI-powered focus insights
-          </Badge>
-
-          <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
-            Focus Like Never
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              {" "}
-              Before
-            </span>
-          </h1>
-
-          <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-            Transform your workspace into a distraction-free zone with ambient
-            sounds, focus timers, and intelligent productivity insights.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <motion.div
+          className="md:hidden mt-4 pt-4 border-t border-white/10"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+        >
+          <div className="flex flex-col space-y-3">
+            {navItems.map((item) => (
+              <a
+                key={item.name}
+                href={item.href}
+                className="text-white/80 hover:text-white transition-colors text-sm"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {item.name}
+              </a>
+            ))}
             <Button
-              size="lg"
-              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-full px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all"
+              variant="secondary"
+              size="sm"
+              className="bg-black/40 backdrop-blur-lg border border-white/10 text-white hover:bg-black/60 hover:border-white/20 rounded-full font-medium w-fit"
             >
-              <Download className="w-5 h-5 mr-2" />
-              Download Free
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="rounded-full px-8 py-4 text-lg font-medium border-2 hover:bg-gray-50 bg-transparent"
-            >
-              <Play className="w-5 h-5 mr-2" />
-              Watch Demo
+              GitHub
             </Button>
           </div>
+        </motion.div>
+      )}
+    </motion.nav>
+  );
+};
 
-          {/* Hero Image/Demo */}
-          <div className="relative max-w-4xl mx-auto">
-            <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 shadow-2xl">
-              <div className="bg-gradient-to-br from-blue-500/20 to-purple-600/20 rounded-2xl p-6 backdrop-blur-sm">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                      <Timer className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-white font-semibold">
-                        Deep Work Session
-                      </h3>
-                      <p className="text-gray-300 text-sm">25:00 remaining</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="text-white hover:bg-white/10 rounded-full"
-                    >
-                      <Pause className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="text-white hover:bg-white/10 rounded-full"
-                    >
-                      <SkipForward className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
+const HeroSection = () => {
+  const { scrollY } = useScroll();
+  const opacity = useTransform(scrollY, [0, 400], [1, 0.6]);
+  const scale = useTransform(scrollY, [0, 400], [1, 0.95]);
 
-                <div className="grid grid-cols-3 gap-4">
-                  <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-                    <CardContent className="p-4 text-center">
-                      <Volume2 className="w-6 h-6 text-white mx-auto mb-2" />
-                      <p className="text-white text-sm">Rain Sounds</p>
-                    </CardContent>
-                  </Card>
-                  <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-                    <CardContent className="p-4 text-center">
-                      <Shield className="w-6 h-6 text-white mx-auto mb-2" />
-                      <p className="text-white text-sm">Block Distractions</p>
-                    </CardContent>
-                  </Card>
-                  <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-                    <CardContent className="p-4 text-center">
-                      <Zap className="w-6 h-6 text-white mx-auto mb-2" />
-                      <p className="text-white text-sm">Focus Mode</p>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+  return (
+    <motion.section
+      className="min-h-screen flex items-center justify-center relative overflow-hidden bg-background"
+      style={{ opacity, scale }}
+    >
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-secondary/5" />
 
-      {/* Features Section */}
-      <section id="features" className="py-24 px-4 bg-white">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Everything you need to
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                {" "}
-                stay focused
+      {/* Floating particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 bg-primary/20 rounded-full"
+            initial={{
+              x: Math.random() * window.innerWidth,
+              y: Math.random() * window.innerHeight,
+              opacity: 0,
+            }}
+            animate={{
+              y: [null, -100],
+              opacity: [0, 1, 0],
+            }}
+            transition={{
+              duration: Math.random() * 10 + 10,
+              repeat: Infinity,
+              delay: Math.random() * 5,
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="relative z-10 text-center max-w-4xl mx-auto px-6 pt-20">
+        <motion.h1
+          className="text-5xl md:text-7xl font-bold text-foreground mb-6 tracking-tight"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          Master Your
+          <span className="text-primary block">Focus</span>
+        </motion.h1>
+
+        <motion.p
+          className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          Transform your productivity with AI-powered focus techniques and
+          distraction blocking
+        </motion.p>
+
+        <motion.div
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+        >
+          <a href="/app">
+            <ShimmerButton
+              borderRadius="none"
+              shimmerSize="2px"
+              className="shadow-2xl [&>div:nth-child(3)]:shadow-none [&>div:nth-child(3)]:group-hover:shadow-none [&>div:nth-child(3)]:group-active:shadow-none hover:bg-background"
+            >
+              <span className="whitespace-pre-wrap text-center text-sm font-medium leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 lg:text-lg hover:text-background">
+                Start Focusing
               </span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Powerful features designed to eliminate distractions and boost
-              your productivity
-            </p>
-          </div>
+            </ShimmerButton>
+          </a>
+        </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="p-8 border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-50 to-white">
-              <CardContent className="p-0">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6">
-                  <Timer className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  Pomodoro Timer
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Built-in focus timer with customizable work and break
-                  intervals. Track your productivity patterns over time.
-                </p>
-              </CardContent>
-            </Card>
+        <motion.div
+          className="mt-16 flex justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.8 }}
+        >
+          <ChevronDown className="w-8 h-8 text-muted-foreground animate-bounce" />
+        </motion.div>
+      </div>
+    </motion.section>
+  );
+};
 
-            <Card className="p-8 border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-purple-50 to-white">
-              <CardContent className="p-0">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6">
-                  <Volume2 className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  Ambient Sounds
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Curated collection of focus-enhancing sounds including rain,
-                  coffee shops, and nature sounds.
-                </p>
-              </CardContent>
-            </Card>
+const FeaturesSection = () => {
+  const features: FeatureCard[] = [
+    {
+      icon: <Focus className="w-8 h-8" />,
+      title: "Deep Focus Mode",
+      description:
+        "Block distractions and enter a state of deep concentration with our AI-powered focus assistant.",
+      stats: [
+        { label: "Focus Time", value: "4.2hrs avg" },
+        { label: "Productivity", value: "+85%" },
+      ],
+    },
+    {
+      icon: <Timer className="w-8 h-8" />,
+      title: "Smart Pomodoro",
+      description:
+        "Adaptive timing based on your work patterns and energy levels throughout the day.",
+      stats: [
+        { label: "Sessions", value: "12/day avg" },
+        { label: "Completion", value: "94%" },
+      ],
+    },
+    {
+      icon: <Target className="w-8 h-8" />,
+      title: "Goal Tracking",
+      description:
+        "Set and achieve your daily focus goals with intelligent progress tracking and insights.",
+      stats: [
+        { label: "Goals Met", value: "89%" },
+        { label: "Streak", value: "21 days" },
+      ],
+    },
+    {
+      icon: <Zap className="w-8 h-8" />,
+      title: "Instant Activation",
+      description:
+        "One-click focus mode that instantly blocks distractions and optimizes your environment.",
+      stats: [
+        { label: "Activation", value: "<1 sec" },
+        { label: "Apps Blocked", value: "50+" },
+      ],
+    },
+    {
+      icon: <Shield className="w-8 h-8" />,
+      title: "Distraction Shield",
+      description:
+        "Advanced AI that learns your distraction patterns and proactively blocks them.",
+      stats: [
+        { label: "Blocked", value: "1.2k/day" },
+        { label: "Accuracy", value: "96%" },
+      ],
+    },
+    {
+      icon: <Brain className="w-8 h-8" />,
+      title: "Focus Analytics",
+      description:
+        "Detailed insights into your focus patterns, peak hours, and productivity trends.",
+      stats: [
+        { label: "Data Points", value: "10M+" },
+        { label: "Insights", value: "Daily" },
+      ],
+    },
+  ];
 
-            <Card className="p-8 border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-green-50 to-white">
-              <CardContent className="p-0">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mb-6">
-                  <Shield className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  Website Blocker
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Automatically block distracting websites during focus
-                  sessions. Customize your blocklist.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="p-8 border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-orange-50 to-white">
-              <CardContent className="p-0">
-                <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6">
-                  <Brain className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  AI Insights
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Get personalized productivity insights and recommendations
-                  based on your focus patterns.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="p-8 border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-pink-50 to-white">
-              <CardContent className="p-0">
-                <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6">
-                  <Zap className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  Focus Modes
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Multiple focus modes for different types of work: deep work,
-                  creative, study, and more.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="p-8 border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-indigo-50 to-white">
-              <CardContent className="p-0">
-                <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-6">
-                  <Star className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  Progress Tracking
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Detailed analytics on your focus sessions, productivity
-                  trends, and goal achievement.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-24 px-4 bg-gradient-to-br from-gray-50 to-blue-50">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-4xl font-bold text-gray-900 mb-16">
-            Loved by thousands of focused professionals
+  return (
+    <section id="features" className="py-32 bg-muted/25">
+      <div className="max-w-7xl mx-auto px-6">
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
+          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+            Powerful Focus Features
           </h2>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            <Card className="p-8 border-0 shadow-lg bg-white">
-              <CardContent className="p-0">
-                <div className="flex items-center mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="w-5 h-5 text-yellow-400 fill-current"
-                    />
-                  ))}
-                </div>
-                <p className="text-gray-600 mb-6 leading-relaxed">
-                  "Distraction Blocker completely transformed my productivity.
-                  The ambient sounds and timer help me get into deep work mode
-                  instantly."
-                </p>
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold mr-4">
-                    SM
-                  </div>
-                  <div className="text-left">
-                    <p className="font-semibold text-gray-900">
-                      Sarah Mitchell
-                    </p>
-                    <p className="text-gray-500 text-sm">Product Designer</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="p-8 border-0 shadow-lg bg-white">
-              <CardContent className="p-0">
-                <div className="flex items-center mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="w-5 h-5 text-yellow-400 fill-current"
-                    />
-                  ))}
-                </div>
-                <p className="text-gray-600 mb-6 leading-relaxed">
-                  "The website blocker feature is a game-changer. I can finally
-                  focus on my writing without getting distracted by social
-                  media."
-                </p>
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold mr-4">
-                    JD
-                  </div>
-                  <div className="text-left">
-                    <p className="font-semibold text-gray-900">James Davis</p>
-                    <p className="text-gray-500 text-sm">Content Writer</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Download Section */}
-      <section id="download" className="py-24 px-4 bg-white">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Available on all your devices
-          </h2>
-          <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
-            Sync your focus sessions across Mac, iPhone, iPad, and web. Start on
-            one device, continue on another.
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Everything you need to eliminate distractions and maximize your
+            productivity
           </p>
+        </motion.div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-            <Button
-              size="lg"
-              className="bg-black hover:bg-gray-800 text-white rounded-2xl px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all"
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {features.map((feature, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              viewport={{ once: true }}
             >
-              <Apple className="w-6 h-6 mr-3" />
-              Download for Mac
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="rounded-2xl px-8 py-4 text-lg font-medium border-2 hover:bg-gray-50 bg-transparent"
-            >
-              <Smartphone className="w-5 h-5 mr-3" />
-              Get iOS App
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="rounded-2xl px-8 py-4 text-lg font-medium border-2 hover:bg-gray-50 bg-transparent"
-            >
-              <Monitor className="w-5 h-5 mr-3" />
-              Use Web App
-            </Button>
-          </div>
-
-          <div className="flex items-center justify-center space-x-8 text-gray-400">
-            <div className="flex items-center space-x-2">
-              <Shield className="w-5 h-5" />
-              <span>Privacy First</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Zap className="w-5 h-5" />
-              <span>Lightning Fast</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Star className="w-5 h-5" />
-              <span>5-Star Rated</span>
-            </div>
-          </div>
+              <Card className="h-full hover:shadow-lg transition-all duration-300 group">
+                <CardHeader>
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="p-3 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                      {feature.icon}
+                    </div>
+                    <h3 className="text-xl font-semibold">{feature.title}</h3>
+                  </div>
+                  <p className="text-muted-foreground">{feature.description}</p>
+                </CardHeader>
+                {feature.stats && (
+                  <CardContent>
+                    <div className="grid grid-cols-2 gap-4">
+                      {feature.stats.map((stat, statIndex) => (
+                        <div key={statIndex} className="text-center">
+                          <div className="text-2xl font-bold text-primary">
+                            {stat.value}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {stat.label}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                )}
+              </Card>
+            </motion.div>
+          ))}
         </div>
-      </section>
+      </div>
+    </section>
+  );
+};
 
-      {/* Footer */}
-      <footer className="py-12 px-4 bg-gray-900 text-white">
-        <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <Brain className="w-5 h-5 text-white" />
+const BenefitsSection = () => {
+  const benefits = [
+    {
+      icon: <TrendingUp className="w-12 h-12" />,
+      title: "3x Productivity Boost",
+      description:
+        "Users report an average 300% increase in productive work hours within the first week.",
+    },
+    {
+      icon: <Clock className="w-12 h-12" />,
+      title: "Save 2+ Hours Daily",
+      description:
+        "Eliminate time wasted on distractions and focus on what truly matters.",
+    },
+    {
+      icon: <Users className="w-12 h-12" />,
+      title: "Join 50k+ Users",
+      description:
+        "Trusted by professionals, students, and teams worldwide for better focus.",
+    },
+    {
+      icon: <Star className="w-12 h-12" />,
+      title: "4.9/5 Rating",
+      description:
+        "Consistently rated as the best focus app by our satisfied users.",
+    },
+  ];
+
+  return (
+    <section id="preview" className="py-32 bg-background">
+      <div className="max-w-7xl mx-auto px-6">
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
+          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+            Why Choose FocusHelper?
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Join thousands of users who have transformed their productivity
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {benefits.map((benefit, index) => (
+            <motion.div
+              key={index}
+              className="text-center group"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              viewport={{ once: true }}
+            >
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 text-primary mb-6 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                {benefit.icon}
               </div>
-              <span className="text-xl font-semibold">Distraction Blocker</span>
-            </div>
-
-            <div className="flex items-center space-x-8">
-              <Link
-                href="#"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                Privacy
-              </Link>
-              <Link
-                href="#"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                Terms
-              </Link>
-              <Link
-                href="#"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                Support
-              </Link>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>
-              &copy; 2024 Distraction Blocker. All rights reserved. Made with ❤️
-              for focused minds.
-            </p>
-          </div>
+              <h3 className="text-xl font-semibold mb-4">{benefit.title}</h3>
+              <p className="text-muted-foreground">{benefit.description}</p>
+            </motion.div>
+          ))}
         </div>
-      </footer>
+      </div>
+    </section>
+  );
+};
+
+const CTASection = () => {
+  return (
+    <section className="py-16 bg-muted/30 border-t border-border">
+      <div className="max-w-4xl mx-auto text-center px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            Ready to Master Your Focus?
+          </h2>
+          <p className="text-xl mb-8 opacity-90">
+            Start your free trial today and experience the power of
+            distraction-free productivity
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button size="lg" variant="secondary" className="rounded-full px-8">
+              Start Free Trial
+            </Button>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
+const FocusHelperLanding = () => {
+  return (
+    <div className="dark min-h-screen bg-background text-foreground">
+      <NavBar />
+      <HeroSection />
+      <FeaturesSection />
+      <BenefitsSection />
+      <CTASection />
     </div>
   );
-}
+};
+
+export default FocusHelperLanding;
